@@ -48,7 +48,7 @@ namespace Plugin.InAppBilling
 		Task<IEnumerable<InAppBillingPurchase>> GetPurchasesAsync(ItemType itemType);
 
         /// <summary>
-        /// (Android specific) Upgrade/Downagrade a previously purchased subscription
+        /// (Android specific) Upgrade/Downgrade/Change a previously purchased subscription
         /// </summary>
         /// <param name="oldProductId">Sku or ID of product that needs to be upgraded</param>
         /// <param name="newProductId">Sku or ID of product that will replace the old one</param>
