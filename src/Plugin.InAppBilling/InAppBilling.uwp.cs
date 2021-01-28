@@ -67,11 +67,6 @@ namespace Plugin.InAppBilling
             return xmlReceipt.ToInAppBillingPurchase(ProductPurchaseStatus.AlreadyPurchased);
         }
 
-        public override Task<InAppBillingPurchase> UpgradePurchasedSubscriptionAsync(string newProductId, string oldProductId, string purchaseTokenOfOriginalSubscription, int prorationMode = 1, IInAppBillingVerifyPurchase verifyPurchase = null)
-        {
-            throw new NotImplementedException("UWP not supported.");
-        }
-
         /// <summary>
         /// Purchase a specific product or subscription
         /// </summary>
