@@ -37,19 +37,25 @@ I co-host a weekly development podcast, [Merge Conflict](http://mergeconflict.fm
 
 ## Version 4 Major Update - Android
 
-We now use Xamarin.Essentials for getting access to the current activity. So ensure you initialize Xamarin.Essentials in your Android app. 
+We now use Xamarin.Essentials for getting access to the current activity. So ensure you [initialize Xamarin.Essentials](https://docs.microsoft.com/xamarin/essentials/get-started?WT.mc_id=friends-0000-jamont) in your Android app. 
 
 Also if you get a null exception the linker is being aggressive so write the following code in your MainActivity:
 
 ```csharp
-var context = Platform.AppContext;
-var activity = Platform.CurrentActivity;
+var context = Xamarin.Essentials.Platform.AppContext;
+var activity = Xamarin.Essentials.Platform.CurrentActivity;
 ```
 
 Version 4.X updates to the new Android billing client. This means there are few important changes:
 1. You must acknowledge all purchases within 3 days, by calling `AcknowledgePurchaseAsync` or the Consume API if it a consumable.
 2. You must hanle Pending Transactions from outside of you app. See [docs from Google](https://developer.android.com/google/play/billing/integrate#pending)
 3. `HandleActivityResult` is removed from the API as it is not needed
+
+### Upgrading from 2/3 to 4
+* Remove `Plugin.CurrentActivity.CrossCurrentActivity.Current.Activity = this;`
+* Remove `InAppBillingImplementation.HandleActivityResult(requestCode, resultCode, data);`
+* Change: `await CrossInAppBilling.Current.ConnectAsync(ItemType.InAppPurchase);` to `await CrossInAppBilling.Current.ConnectAsync();`
+* Change: `CrossInAppBilling.Current.PurchaseAsync(productId, ItemType.InAppPurchase, payload);` to `CrossInAppBilling.Current.PurchaseAsync(productId, ItemType.InAppPurchase);`
 
 ### Pending Transactions:
 * If the result of PurchaseAsync is PurchaseState.PaymentPending, store the order details locally and inform the user that they will have access to the product when the payment completes
@@ -58,6 +64,17 @@ Version 4.X updates to the new Android billing client. This means there are few 
 * If the PurchaseState is Purchased, call ConsumePurchaseAsync or AcknowledgePurchaseAsync, depending on the product type
 
 I highly recommend reading the entire [Google Play Billing System docs](https://developer.android.com/google/play/billing/).
+
+#### Consumable vs Non-consumables on Android
+
+On Android if you purchase anything you must first Acknowledge a purchase else it will be refunded. See the android documentation.
+
+https://developer.android.com/google/play/billing/integrate#process
+https://developer.android.com/google/play/billing/integrate#pending
+
+> For consumables, the consumeAsync() method fulfills the acknowledgement requirement and indicates that your app has granted entitlement to the user. This method also enables your app to make the one-time product available for purchase again.
+
+So, if you have a consumable... `ConsumePurchaseAsync` will also acknowledge it, if you have a non-consumable you will need to call `AcknowledgePurchaseAsync`.
 
 ## Version 3+ Linker Settings
 
